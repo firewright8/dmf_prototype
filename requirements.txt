@@ -1,0 +1,6 @@
+Flask
+Werkzeug
+pandas
+openpyxl
+qrcode
+Pillow

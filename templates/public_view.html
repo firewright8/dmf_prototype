@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public Audit - DMF Raigarh</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f6f9; }
+        .official-header { background-color: #002147; border-bottom: 4px solid #FF9933; color: white; padding: 15px 0; }
+        .card { box-shadow: 0 4px 8px rgba(0,0,0,0.05); border: none; }
+        .label { font-weight: 600; color: #495057; font-size: 0.85rem; text-transform: uppercase; }
+        .data-value { font-size: 1.1rem; color: #000; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <div class="official-header text-center mb-4">
+        <h4 class="mb-1">DMF Public Social Audit</h4>
+        <h6 class="mb-0 fw-light">Government of Chhattisgarh</h6>
+    </div>
+
+    <div class="container" style="max-width: 600px;">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="text-primary border-bottom pb-2 mb-3">Project Details</h5>
+                
+                <div class="label">Project ID</div>
+                <div class="data-value font-monospace">{{ base_id }}</div>
+
+                <div class="label">Work Name</div>
+                <div class="data-value">{{ p.work_name }}</div>
+
+                <div class="label">Location</div>
+                <div class="data-value">{{ p.village }} (Village Code), {{ p.block }} (Block Code)</div>
+
+                <div class="label">Executing Department</div>
+                <div class="data-value">{{ p.department }}</div>
+
+                <div class="label">Objective</div>
+                <div class="data-value fs-6">{{ p.objective }}</div>
+            </div>
+        </div>
+
+        <div class="card border-primary mb-5">
+            <div class="card-header bg-primary text-white fw-bold">Verified Project Documents</div>
+            <ul class="list-group list-group-flush">
+                {% for doc in documents %}
+                <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                    <span class="fw-bold">{{ doc.type }}</span>
+                    <a href="/public/download/{{ doc.filename }}" class="btn btn-sm btn-outline-primary" target="_blank">View File</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

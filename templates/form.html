@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DMF Project Submission - Govt of Chhattisgarh</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f6f9; }
+        .official-header { background-color: #002147; border-bottom: 4px solid #FF9933; color: white; padding: 20px 0; }
+        .card { box-shadow: 0 4px 8px rgba(0,0,0,0.05); border: none; margin-bottom: 25px; }
+        .card-header { background-color: #f8f9fa; border-bottom: 2px solid #dee2e6; font-weight: bold; color: #002147; }
+        label { font-weight: 500; font-size: 0.9rem; color: #495057; }
+        .form-control[readonly] { background-color: #e9ecef; }
+        .btn-submit { background-color: #002147; color: white; font-weight: bold; padding: 10px 30px; }
+        .btn-submit:hover { background-color: #001a38; color: white; }
+        /* Hide the AS field by default */
+        #as_group { display: none; }
+    </style>
+</head>
+<body>
+    <div class="official-header text-center mb-4">
+        <h3 class="mb-1">District Mineral Foundation (DMF)</h3>
+        <h6 class="mb-0 fw-light">District Administration, Raigarh, Government of Chhattisgarh</h6>
+    </div>
+
+    <div class="container" style="max-width: 800px;">
+        <!-- The form submits POST data to the /submit_project route on our Python backend -->
+        <form id="uploadForm" action="/submit_project" method="POST" enctype="multipart/form-data">
+            
+            <div class="card">
+                <div class="card-header">Project Overview & Verification</div>
+                <div class="card-body row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">District</label>
+                        <input type="text" class="form-control" name="district" value="Raigarh" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Financial Year</label>
+                        <input type="text" class="form-control" name="fy" placeholder="e.g., 2026" required>
+                    </div>
+
+                    <!-- NEW: Work Order Number for deduplication tracking -->
+                    <div class="col-md-12">
+                        <label class="form-label">Work Order (WO) Number</label>
+                        <input type="text" class="form-control" name="wo_number" required placeholder="Enter unique WO number">
+                    </div>
+
+                    <!-- NEW: Logic toggle for Administrative Sanction -->
+                    <div class="col-md-6">
+                        <label class="form-label">Has this project received Administrative Sanction (AS)?</label>
+                        <select class="form-select" id="has_as" name="has_as" required>
+                            <option value="" disabled selected>Select an option...</option>
+                            <option value="no">No, it is pending</option>
+                            <option value="yes">Yes, it is sanctioned</option>
+                        </select>
+                    </div>
+
+                    <!-- NEW: AS Number field (hidden until "Yes" is selected) -->
+                    <div class="col-md-6" id="as_group">
+                        <label class="form-label">Administrative Sanction (AS) Number</label>
+                        <!-- This field becomes mandatory only if exposed by the Javascript below -->
+                        <input type="text" class="form-control" id="as_number" name="as_number" placeholder="Enter unique AS number">
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Work Name</label>
+                        <input type="text" class="form-control" name="work_name" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Related Department</label>
+                        <input type="text" class="form-control" name="department" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Proposed By</label>
+                        <input type="text" class="form-control" name="proposed_by" required>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Objective of Work</label>
+                        <textarea class="form-control" name="objective" rows="2" required></textarea>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Justification of Work</label>
+                        <textarea class="form-control" name="justification" rows="2" required></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">Location & Sector Classification</div>
+                <div class="card-body row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Block Code</label>
+                        <input type="text" class="form-control" name="block" list="blockOptions" autocomplete="off" placeholder="Select Block" required>
+                        <!-- datalist is populated by the Flask backend sending Python dictionaries to the HTML template -->
+                        <datalist id="blockOptions">
+                            {% for code, name in blocks.items() %}
+                            <option value="{{ code }}">{{ name }}</option>
+                            {% endfor %}
+                        </datalist>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Village Code</label>
+                        <input type="text" class="form-control" name="village" list="villageOptions" autocomplete="off" placeholder="Select Block first..." required>
+                        <!-- Javascript populates this datalist dynamically based on the block chosen above -->
+                        <datalist id="villageOptions"></datalist>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Sector Code</label>
+                        <input type="text" class="form-control" name="sector" list="sectorOptions" autocomplete="off" placeholder="Select Sector" required>
+                        <datalist id="sectorOptions">
+                            {% for code, info in sectors.items() %}
+                            <option value="{{ code }}">{{ info['Sector'] }}</option>
+                            {% endfor %}
+                        </datalist>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-primary">
+                <div class="card-header bg-primary text-white">Mandatory Documents</div>
+                <div class="card-body">
+                    <p class="small text-muted mb-4">Maximum allowed sizes: PDF (10MB), JPG/JPEG (500KB).</p>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">UCC (Utilization Certificate)</label>
+                        <input class="form-control form-control-sm" type="file" name="UCC" accept=".pdf, .jpg, .jpeg" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">GEO (Geotagged Photo)</label>
+                        <input class="form-control form-control-sm" type="file" name="GEO" accept=".jpg, .jpeg" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">ADS (Administrative Sanction)</label>
+                        <input class="form-control form-control-sm" type="file" name="ADS" accept=".pdf, .jpg, .jpeg" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">TES (Technical Sanction)</label>
+                        <input class="form-control form-control-sm" type="file" name="TES" accept=".pdf, .jpg, .jpeg" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">PRP (Proposal/Need Assessment)</label>
+                        <input class="form-control form-control-sm" type="file" name="PRP" accept=".pdf, .jpg, .jpeg" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mb-5">
+                <button type="submit" class="btn btn-submit btn-lg">Submit Project Application</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // --- LOGIC: AS NUMBER TOGGLE ---
+        // Listens for a change in the 'has_as' dropdown. If 'yes', it shows the input field and makes it mandatory.
+        document.getElementById('has_as').addEventListener('change', function(e) {
+            const asGroup = document.getElementById('as_group');
+            const asInput = document.getElementById('as_number');
+            if (e.target.value === 'yes') {
+                asGroup.style.display = 'block';
+                asInput.required = true;
+            } else {
+                asGroup.style.display = 'none';
+                asInput.required = false;
+                asInput.value = ''; // Clear value if user toggles back to 'no'
+            }
+        });
+
+        // --- LOGIC: DYNAMIC VILLAGE CASCADING ---
+        // Pulls the JSON dictionary provided by the backend to map villages to blocks
+        const villageMap = {{ village_map | tojson | safe }};
+        const blockInput = document.querySelector('[name="block"]');
+        const villageInput = document.querySelector('[name="village"]');
+        const villageDatalist = document.getElementById('villageOptions');
+
+        blockInput.addEventListener('input', function() {
+            const selectedBlock = this.value;
+            villageDatalist.innerHTML = ''; 
+            villageInput.value = ''; 
+            if (villageMap[selectedBlock]) {
+                villageMap[selectedBlock].forEach(function(v) {
+                    const opt = document.createElement('option');
+                    opt.value = v.code;
+                    opt.innerText = v.label;
+                    villageDatalist.appendChild(opt);
+                });
+            }
+        });
+
+        // --- LOGIC: SUBMISSION VALIDATION ---
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            let valid = true;
+            let msg = 'Submission Blocked:\n\n';
+            
+            // Verifies that the user actually selected an option from the dropdowns, rather than typing gibberish
+            const blockVal = blockInput.value;
+            const villageVal = villageInput.value;
+            const sectorVal = document.querySelector('[name="sector"]').value;
+
+            const blockValid = Array.from(document.querySelectorAll('#blockOptions option')).some(opt => opt.value === blockVal);
+            if (!blockValid) { valid = false; msg += "- Invalid Block Code. Select an exact match from the dropdown.\n"; }
+
+            const villageValid = Array.from(document.querySelectorAll('#villageOptions option')).some(opt => opt.value === villageVal);
+            if (!villageValid && blockValid) { 
+                valid = false; 
+                msg += "- Invalid Village Code. This village does not belong to the selected Block, or does not exist.\n"; 
+            }
+
+            const sectorValid = Array.from(document.querySelectorAll('#sectorOptions option')).some(opt => opt.value === sectorVal);
+            if (!sectorValid) { valid = false; msg += "- Invalid Sector Code. Select an exact match from the dropdown.\n"; }
+
+            // File size validation to protect server memory
+            const docs = ['UCC', 'GEO', 'ADS', 'TES', 'PRP'];
+            docs.forEach(id => {
+                const fileInput = document.querySelector(`input[name="${id}"]`);
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    const ext = file.name.split('.').pop().toLowerCase();
+                    const sizeKB = file.size / 1024;
+                    if (ext === 'pdf' && sizeKB > 10240) { valid = false; msg += `- ${id}: PDF exceeds 10MB limit.\n`; }
+                    else if (['jpg', 'jpeg'].includes(ext) && sizeKB > 500) { valid = false; msg += `- ${id}: Image exceeds 500KB limit.\n`; }
+                    else if (!['pdf', 'jpg', 'jpeg'].includes(ext)) { valid = false; msg += `- ${id}: Invalid file type.\n`; }
+                }
+            });
+
+            // If any check failed, block the form from submitting and alert the user
+            if (!valid) { e.preventDefault(); alert(msg); }
+        });
+    </script>
+</body>
+</html>

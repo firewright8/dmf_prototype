@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Submission Successful - Govt of Chhattisgarh</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f6f9; }
+        .official-header { background-color: #002147; border-bottom: 4px solid #FF9933; color: white; padding: 20px 0; margin-bottom: 40px; }
+        .success-icon { font-size: 4rem; color: #198754; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="official-header text-center">
+        <h3 class="mb-1">District Mineral Foundation (DMF)</h3>
+        <h6 class="mb-0 fw-light">District Administration, Raigarh, Government of Chhattisgarh</h6>
+    </div>
+
+    <div class="container text-center" style="max-width: 600px;">
+        <div class="card shadow-sm border-success">
+            <div class="card-body p-5">
+                <div class="success-icon">✓</div>
+                <h2 class="text-success mb-4">Application Submitted Successfully</h2>
+                
+                <div class="bg-light p-3 rounded mb-4 text-start">
+                    <p class="mb-1"><strong>Project Base ID:</strong></p>
+                    <h4 class="text-primary mb-3">{{ file_base }}</h4>
+                    <p class="mb-0 text-muted small"><strong>Timestamp:</strong> {{ time }}</p>
+                </div>
+                
+                <div class="d-grid gap-2 d-md-block mt-4">
+                    <a href="/print_plaque/{{ project_id }}" target="_blank" class="btn btn-warning px-4 me-2 fw-bold text-dark">🖨️ Print Site Plaque</a>
+                    <a href="/view/{{ project_id }}" class="btn btn-outline-primary px-4 me-2">View Application</a>
+                    <a href="/" class="btn btn-primary px-4">Submit New Application</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

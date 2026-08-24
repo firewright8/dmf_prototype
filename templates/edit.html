@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Project</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f8f9fa; }
+        .container { max-width: 800px; background: white; padding: 25px; border-radius: 8px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        th { background-color: #f2f2f2; width: 30%; }
+        .btn { display: inline-block; margin-top: 20px; padding: 10px 15px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Application Details</h2>
+        <table>
+            <tr><th>Database ID</th><td>{{ p.id }}</td></tr>
+            <tr><th>District</th><td>{{ p.district }}</td></tr>
+            <tr><th>Block Code</th><td>{{ p.block }}</td></tr>
+            <tr><th>Village Code</th><td>{{ p.village }}</td></tr>
+            <tr><th>Sector Code</th><td>{{ p.sector }}</td></tr>
+            <tr><th>Financial Year</th><td>{{ p.fy }}</td></tr>
+            <tr><th>Work Name</th><td>{{ p.work_name }}</td></tr>
+            <tr><th>Department</th><td>{{ p.department }}</td></tr>
+            <tr><th>Objective</th><td>{{ p.objective }}</td></tr>
+            <tr><th>Justification</th><td>{{ p.justification }}</td></tr>
+            <tr><th>Proposed By</th><td>{{ p.proposed_by }}</td></tr>
+            <tr><th>Current Status</th><td>{{ p.status }}</td></tr>
+            <tr><th>Submitted At</th><td>{{ p.created_at }}</td></tr>
+        </table>
+        <a href="/" class="btn" style="background-color: #007bff;">Create Another Application</a>
+        <a href="/dashboard" class="btn">Go to Dashboard</a>
+    </div>
+</body>
+</html>
